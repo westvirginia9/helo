@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kotak Apresiasi Firda</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f0ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Title */
+        h1 {
+            color: #8a2be2;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        /* Badge Style */
+        .badge {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at 50%, #d8b4fe, #9b72db);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(153, 50, 204, 0.5);
+            transition: transform 0.5s, box-shadow 0.5s;
+            animation: pulse 2s infinite;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(153, 50, 204, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(153, 50, 204, 0.7); }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Zoom-in Animation */
+        @keyframes zoomIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #ffffff, #e6e4fc);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: zoomIn 0.5s ease forwards;
+            text-align: center;
+        }
+
+        .close {
+            background-color: #d8b4fe;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        /* Message Wall */
+        .message-wall {
+            margin-top: 20px;
+            text-align: center;
+            color: #4a4a4a;
+            font-size: 1.2em;
+        }
+
+        /* Balloon / Confetti */
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 20px;
+            height: 30px;
+            background: #ff85a1;
+            border-radius: 50%;
+            animation: rise 5s linear infinite;
+            opacity: 0.8;
+        }
+
+        .balloon:nth-child(even) {
+            background: #85d6ff;
+            width: 25px;
+            height: 35px;
+        }
+
+        /* Balloon Rise Animation */
+        @keyframes rise {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-110vh); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Title -->
+    <h1>Kotak Apresiasi Firda</h1>
+
+    <!-- Badge -->
+    <div class="badge" onclick="openModal()">🌟</div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal()">Close</button>
+            <h2>FIRDA HEBATTT!</h2>
+            <div id="gifContainer">
+                <img src="" alt="funny gif" id="randomGif" style="max-width: 100%; border-radius: 10px;">
+            </div>
+            <div class="message-wall" id="messageWall"></div>
+        </div>
+    </div>
+
+    <script>
+        // Array of messages
+        const messages = [
+            "Kamu hebat, jangan pernah menyerah!",
+            "Kerja kerasmu menginspirasi banyak orang!",
+            "Bangga banget sama kamu!",
+            "Tugas selesai, sekarang waktunya bersantai!",
+            "Teruslah berjuang dan berkarya!"
+        ];
+
+        // Array of GIF URLs
+        const gifs = [
+            "https://media4.giphy.com/media/wsUtUtLR3A2XPvfLVs/giphy.webp?cid=790b7611iqb838rbf7npbwin9huinx06137aqaeslrb71xdr&ep=v1_gifs_search&rid=giphy.webp&ct=g",
+            "https://media4.giphy.com/media/i6MoONcPnvWuQwIQd4/200.webp?cid=790b7611tsyjzmwz2m5k7md78ev7gm75hn6npcsz0sd7xsrq&ep=v1_gifs_search&rid=200.webp&ct=g",
+            "https://media1.giphy.com/media/YTbZzCkRQCEJa/200.webp?cid=790b7611g3vo7lfthfne7td7fjwuwo4p4ghch8dh8j04gq3d&ep=v1_gifs_trending&rid=200.webp&ct=g",
+            "https://media2.giphy.com/media/tHIRLHtNwxpjIFqPdV/giphy.webp?cid=82a1493bi01ihooe8od7wbuwfbruh09n85392ytupgwx2pbj&ep=v1_gifs_trending&rid=giphy.webp&ct=g",
+            "https://media4.giphy.com/media/wsUtUtLR3A2XPvfLVs/giphy.webp?cid=790b7611iqb838rbf7npbwin9huinx06137aqaeslrb71xdr&ep=v1_gifs_search&rid=giphy.webp&ct=g"
+        ];
+
+        // Function to open the modal, display a random message and random gif
+        function openModal() {
+            document.getElementById("modal").style.display = "flex";
+
+            // Display random message
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById("messageWall").innerText = `"${randomMessage}"`;
+
+            // Display random gif
+            const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
+            document.getElementById("randomGif").src = randomGif;
+
+            // Create balloon effect
+            createBalloons();
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+            clearBalloons();
+        }
+
+        // Function to create balloon elements
+        function createBalloons() {
+            const modal = document.getElementById("modal");
+            for (let i = 0; i < 20; i++) {
+                const balloon = document.createElement("div");
+                balloon.classList.add("balloon");
+                balloon.style.left = `${Math.random() * 100}%`;
+                balloon.style.animationDelay = `${Math.random() * 2}s`;
+                modal.appendChild(balloon);
+            }
+        }
+
+        // Function to clear balloon elements
+        function clearBalloons() {
+            const balloons = document.querySelectorAll(".balloon");
+            balloons.forEach(balloon => balloon.remove());
+        }
+    </script>
+
+</body>
+</html>
